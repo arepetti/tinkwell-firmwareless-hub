@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinkwell.Runlet.Firmwareless.Proxy", "Tinkwell.Runlet.Firmwareless.Proxy.csproj", "{98050645-7434-37CA-3136-C770A5F9088A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98050645-7434-37CA-3136-C770A5F9088A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98050645-7434-37CA-3136-C770A5F9088A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98050645-7434-37CA-3136-C770A5F9088A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98050645-7434-37CA-3136-C770A5F9088A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87F6E573-1EDE-49C6-BB85-0DAAAE9A79AD}
+	EndGlobalSection
+EndGlobal

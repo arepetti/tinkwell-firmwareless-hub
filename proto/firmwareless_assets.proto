@@ -1,0 +1,136 @@
+syntax = "proto3";
+package tw.firmwareless.assets;
+option csharp_namespace = "Tinkwell.Runlet.Firmwareless.AssetRegistry.Proto";
+
+import "google/protobuf/empty.proto";
+
+service AssetRegistryService {
+  rpc RegisterAsset(RegisterAssetRequest) returns (RegisterAssetReply);
+  rpc RemoveAsset(RemoveAssetRequest) returns (RemoveAssetReply);
+  rpc GetAsset(GetAssetRequest) returns (GetAssetReply);
+  rpc ListAssets(google.protobuf.Empty) returns (ListAssetsReply);
+  rpc UpdateAssetState(UpdateAssetStateRequest) returns (UpdateAssetStateReply);
+  rpc RecordHeartbeat(RecordHeartbeatRequest) returns (RecordHeartbeatReply);
+  rpc GetAssetPermissions(GetAssetPermissionsRequest) returns (GetAssetPermissionsReply);
+  rpc GetPendingCommandCount(GetPendingCommandCountRequest) returns (GetPendingCommandCountReply);
+  rpc EnqueueCommand(EnqueueCommandRequest) returns (EnqueueCommandReply);
+  rpc DequeueCommands(DequeueCommandsRequest) returns (DequeueCommandsReply);
+}
+
+message AssetInfo {
+  string id = 1;
+  string display_name = 2;
+  int32 vendor_id = 3;
+  int32 product_id = 4;
+  bytes variant = 5;
+  string firmware_version = 6;
+  string communication_mode = 7;  // "service-only", "always-on", "mailbox"
+  string firmlet_name = 8;
+  string firmlet_version = 9;
+  string state = 10;
+  string created_at = 11;
+  string last_heartbeat = 12;
+  string last_error = 13;
+}
+
+message RegisterAssetRequest {
+  string id = 1;
+  string display_name = 2;
+  int32 vendor_id = 3;
+  int32 product_id = 4;
+  bytes variant = 5;
+  string firmware_version = 6;
+  string communication_mode = 7;
+  string firmlet_name = 8;
+  string firmlet_version = 9;
+  string firmlet_path = 10;
+}
+
+message RegisterAssetReply {
+  bool success = 1;
+  string error = 2;
+}
+
+message RemoveAssetRequest {
+  string id = 1;
+}
+
+message RemoveAssetReply {
+  bool success = 1;
+}
+
+message GetAssetRequest {
+  string id = 1;
+}
+
+message GetAssetReply {
+  bool found = 1;
+  AssetInfo asset = 2;
+}
+
+message ListAssetsReply {
+  repeated AssetInfo assets = 1;
+}
+
+message UpdateAssetStateRequest {
+  string id = 1;
+  string state = 2;
+  string error = 3;
+}
+
+message UpdateAssetStateReply {
+  bool success = 1;
+}
+
+message RecordHeartbeatRequest {
+  string asset_id = 1;
+}
+
+message RecordHeartbeatReply {
+  bool success = 1;
+}
+
+message GetAssetPermissionsRequest {
+  string asset_id = 1;
+}
+
+message GetAssetPermissionsReply {
+  repeated string allowed_measures = 1;
+  repeated string allowed_services = 2;
+  repeated string permissions = 3;
+}
+
+message GetPendingCommandCountRequest {
+  string asset_id = 1;
+}
+
+message GetPendingCommandCountReply {
+  int32 count = 1;
+}
+
+message EnqueueCommandRequest {
+  string asset_id = 1;
+  string cmd_type = 2;
+  bytes payload = 3;
+}
+
+message EnqueueCommandReply {
+  bool success = 1;
+}
+
+message DequeueCommandsRequest {
+  string asset_id = 1;
+  int32 max_count = 2;
+}
+
+message DequeueCommandsReply {
+  repeated CommandInfo commands = 1;
+}
+
+message CommandInfo {
+  int64 id = 1;
+  string asset_id = 2;
+  string cmd_type = 3;
+  bytes payload = 4;
+  string created_at = 5;
+}

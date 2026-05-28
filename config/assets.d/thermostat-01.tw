@@ -1,0 +1,15 @@
+// thermostat-01.tw -- Asset with physical device, explicit firmlet
+
+asset thermostat-01 {
+    id       "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    vendor   1          // registry-assigned vendor ID
+    product  42
+    variant  0x01
+
+    communication always-on
+
+    firmlet {
+        name    "hvac-controller"
+        version "1.2.0"
+    }
+}

@@ -1,0 +1,21 @@
+// measures.tw -- Declares measures this firmlet may write to Tinkwell.
+//
+// The Asset Registry runlet reads this file at registration time and stores
+// the allowed measure names. The CoAP runlet and proxy runlet check these
+// when enforcing permissions on WriteMeasure calls.
+
+measure temperature {
+    description="Current zone temperature (Celsius)"
+}
+
+measure humidity {
+    description="Current zone relative humidity (%)"
+}
+
+measure setpoint {
+    description="Active temperature setpoint (Celsius)"
+}
+
+measure hvac-mode {
+    description="Current operating mode (off, heat, cool, auto)"
+}

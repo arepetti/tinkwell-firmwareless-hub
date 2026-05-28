@@ -1,0 +1,18 @@
+// services.tw -- Service declarations for the mesh-bridge firmlet.
+//
+// The host process reads this file at startup and registers the service with
+// the process monitor. Because a handler template is provided, methods do not
+// need to be listed explicitly -- any incoming call is resolved to a WASM
+// export at call time using the template (e.g. Route -> mesh_route).
+//
+// Methods that need a non-standard export name can still be declared with an
+// explicit handler override:
+//
+//     method LegacyPing handler="do_ping";
+
+service "mesh.v1.MeshService" {
+    module="mesh-bridge"
+    family="MeshRouting"
+    description="Routes mesh network messages between devices in a star or tree topology"
+    handler="mesh_{name:lowercase}"
+}

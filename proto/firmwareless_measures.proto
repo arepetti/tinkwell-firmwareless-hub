@@ -1,0 +1,78 @@
+// firmwareless_measures.proto -- Built-in measures service for firmlets.
+//
+// Firmlets call this service via tw_call_service("tinkwell.hub.v1.MeasuresService", ...)
+// with protobuf-encoded request/response payloads. The WasmHost handles
+// these calls locally (reads/definitions) or forwards them through IPC (writes).
+//
+// This proto is shipped in firmlet packages so callers can generate stubs
+// with nanopb (C), prost (Rust), or as-proto (AssemblyScript).
+//
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+package tinkwell.hub.v1;
+
+option csharp_namespace = "Tinkwell.Firmwareless.Hosting.Measures.Proto";
+
+service FirmletMeasures {
+  rpc WriteMeasure(FirmletWriteMeasureRequest) returns (FirmletWriteMeasureReply);
+  rpc ReadMeasure(FirmletReadMeasureRequest) returns (FirmletReadMeasureReply);
+  rpc ListMeasures(FirmletListMeasuresRequest) returns (FirmletListMeasuresReply);
+  rpc GetDefinition(FirmletGetDefinitionRequest) returns (FirmletGetDefinitionReply);
+}
+
+message FirmletWriteMeasureRequest {
+  string name = 1;
+  oneof value {
+    double float_value    = 2;
+    string quantity_value = 3;
+  }
+  uint64 timestamp_ms = 4;
+}
+
+message FirmletWriteMeasureReply {
+  bool   success = 1;
+  string error   = 2;
+}
+
+message FirmletReadMeasureRequest {
+  string name = 1;
+}
+
+message FirmletReadMeasureReply {
+  bool   found        = 1;
+  string name         = 2;
+  double value        = 3;
+  string unit         = 4;
+  uint64 timestamp_ms = 5;
+}
+
+message FirmletListMeasuresRequest {}
+
+message FirmletListMeasuresReply {
+  repeated FirmletMeasureInfo measures = 1;
+}
+
+message FirmletMeasureInfo {
+  string name          = 1;
+  string quantity_type = 2;
+  string unit          = 3;
+  string description   = 4;
+}
+
+message FirmletGetDefinitionRequest {
+  string name = 1;
+}
+
+message FirmletGetDefinitionReply {
+  bool   found         = 1;
+  string name          = 2;
+  string quantity_type  = 3;
+  string unit           = 4;
+  double minimum        = 5;
+  double maximum        = 6;
+  int32  precision      = 7;
+  int32  ttl_seconds    = 8;
+  string description    = 9;
+  string category       = 10;
+}

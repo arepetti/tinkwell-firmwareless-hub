@@ -1,0 +1,65 @@
+// hvac.proto -- Protobuf contract for hvac.v1.ClimateService.
+//
+// Ships inside the firmlet package for caller code generation.
+
+syntax = "proto3";
+package hvac.v1;
+
+// ── GetStatus ───────────────────────────────────────────────────────────
+
+message GetStatusRequest {
+}
+
+message GetStatusResponse {
+  double current_temp   = 1;
+  double current_humid  = 2;
+  double setpoint       = 3;
+  Mode   mode           = 4;
+  bool   compressor_on  = 5;
+  bool   fan_on         = 6;
+}
+
+enum Mode {
+  MODE_OFF  = 0;
+  MODE_HEAT = 1;
+  MODE_COOL = 2;
+  MODE_AUTO = 3;
+}
+
+// ── SetTarget ───────────────────────────────────────────────────────────
+
+message SetTargetRequest {
+  double setpoint = 1;
+  Mode   mode     = 2;
+}
+
+message SetTargetResponse {
+  bool   accepted = 1;
+  string reason   = 2;  // non-empty if not accepted
+}
+
+// ── GetSchedule / SetSchedule ───────────────────────────────────────────
+
+message GetScheduleRequest {
+}
+
+message GetScheduleResponse {
+  repeated ScheduleEntry entries = 1;
+}
+
+message SetScheduleRequest {
+  repeated ScheduleEntry entries = 1;
+}
+
+message SetScheduleResponse {
+  bool   accepted = 1;
+  string reason   = 2;
+}
+
+message ScheduleEntry {
+  uint32 day_of_week = 1;  // 0=Sunday
+  uint32 hour        = 2;
+  uint32 minute      = 3;
+  double setpoint    = 4;
+  Mode   mode        = 5;
+}

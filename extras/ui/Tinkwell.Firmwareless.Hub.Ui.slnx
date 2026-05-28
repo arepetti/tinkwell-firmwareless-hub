@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Tinkwell.Firmwareless.Hub.Ui/Tinkwell.Firmwareless.Hub.Ui.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tinkwell.Firmwareless.Hub.Ui.Tests/Tinkwell.Firmwareless.Hub.Ui.Tests.csproj" />
+  </Folder>
+</Solution>

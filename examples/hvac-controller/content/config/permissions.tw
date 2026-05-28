@@ -1,0 +1,33 @@
+// permissions.tw -- Declares permissions this firmlet requires.
+//
+// The Asset Registry runlet reads this file at registration time and stores
+// the permission set. The proxy and CoAP runlets query these permissions
+// when enforcing access control.
+
+permission send-command {
+    description="Send commands to the bound device"
+}
+
+permission read-sensor {
+    description="Read sensor values from the bound device"
+}
+
+permission call-service "mesh.v1.MeshService" {
+    description="Call the mesh routing service for multi-zone coordination"
+}
+
+permission write-measure "temperature" {
+    description="Write temperature readings to Tinkwell measures"
+}
+
+permission write-measure "humidity" {
+    description="Write humidity readings to Tinkwell measures"
+}
+
+permission write-measure "setpoint" {
+    description="Write setpoint changes to Tinkwell measures"
+}
+
+permission write-measure "hvac-mode" {
+    description="Write mode changes to Tinkwell measures"
+}

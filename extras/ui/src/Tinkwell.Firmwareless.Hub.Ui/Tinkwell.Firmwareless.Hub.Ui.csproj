@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Core.Api" />
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Tools" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\..\..\proto\firmwareless_proxy.proto" GrpcServices="Client" Link="Proto\firmwareless_proxy.proto" />
+    <Protobuf Include="..\..\..\..\proto\firmwareless_assets.proto" GrpcServices="Client" Link="Proto\firmwareless_assets.proto" />
+    <Protobuf Include="..\..\..\..\proto\state_store.proto" GrpcServices="Client" Link="Proto\state_store.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\..\app\libs\Tinkwell.Configuration.Parser\Tinkwell.Configuration.Parser.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\app\libs\Tinkwell.Expressions\Tinkwell.Expressions.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\app\libs\Tinkwell.Telemetry\Tinkwell.Telemetry.csproj" />
+  </ItemGroup>
+
+</Project>

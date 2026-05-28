@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Core.Api" />
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Tools" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\proto\firmwareless_proxy.proto" GrpcServices="Client" Link="Proto\firmwareless_proxy.proto" />
+    <Protobuf Include="..\..\proto\firmwareless_assets.proto" GrpcServices="Client" Link="Proto\firmwareless_assets.proto" />
+    <Protobuf Include="..\..\..\device\tw-device-sdk\proto\tw_protocol.proto" GrpcServices="None" Link="Proto\tw_protocol.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\registry\src\Tinkwell.Firmlets.Registry.Client\Tinkwell.Firmlets.Registry.Client.csproj" />
+    <ProjectReference Include="..\..\..\..\..\app\libs\Tinkwell.Coap\Tinkwell.Coap.csproj" />
+    <ProjectReference Include="..\..\..\..\..\app\libs\Tinkwell.Package\Tinkwell.Package.csproj" />
+  </ItemGroup>
+
+</Project>

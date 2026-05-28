@@ -1,0 +1,14 @@
+// battery-sensor.tw -- Asset with deep-sleep device, auto-resolved firmlet
+
+asset battery-sensor {
+    id       "e5f6a7b8-c9d0-1234-5678-9abcdef01234"
+    vendor   1
+    product  99
+    variant  0x00
+
+    communication mailbox
+
+    firmlet {
+        name    "env-monitor"
+    }
+}

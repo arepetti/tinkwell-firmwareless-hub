@@ -1,0 +1,9 @@
+// hub-defaults.tw -- Default settings for the hub.
+// Overridden by hub.tw and environment variables.
+
+hub {
+    coap {
+        bind "0.0.0.0"
+        port 5684
+    }
+}

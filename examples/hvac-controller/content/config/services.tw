@@ -1,0 +1,19 @@
+// services.tw -- Service declarations for the hvac-controller firmlet.
+//
+// This firmlet manages a thermostat device and exposes a climate control
+// service to other firmlets. It also consumes the mesh routing service
+// for multi-zone coordination.
+
+service "hvac.v1.ClimateService" {
+    module="hvac-controller"
+    family="Climate"
+    description="Climate control for a single HVAC zone"
+    handler="hvac_{name:lowercase}"
+
+    depends_on "mesh.v1.MeshService"
+
+    method GetStatus;
+    method SetTarget;
+    method GetSchedule;
+    method SetSchedule;
+}

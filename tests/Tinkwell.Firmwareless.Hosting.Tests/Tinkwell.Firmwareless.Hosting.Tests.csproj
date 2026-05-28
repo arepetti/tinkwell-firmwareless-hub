@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Tinkwell.Firmwareless.Hosting.Router\Tinkwell.Firmwareless.Hosting.Router.csproj" />
+  </ItemGroup>
+
+  <!-- Link WasmHost service files directly to avoid duplicate proto types from two Exe references -->
+  <ItemGroup>
+    <Compile Include="..\..\src\Tinkwell.Firmwareless.Hosting.WasmHost\Services\ServiceDefinition.cs" Link="Linked\ServiceDefinition.cs" />
+    <Compile Include="..\..\src\Tinkwell.Firmwareless.Hosting.WasmHost\Services\ServicesTwParser.cs" Link="Linked\ServicesTwParser.cs" />
+    <Compile Include="..\..\src\Tinkwell.Firmwareless.Hosting.WasmHost\Services\HandlerResolver.cs" Link="Linked\HandlerResolver.cs" />
+    <Compile Include="..\..\src\Tinkwell.Firmwareless.Hosting.WasmHost\Measures\MeasureCache.cs" Link="Linked\MeasureCache.cs" />
+    <Compile Include="..\..\src\Tinkwell.Firmwareless.Hosting.WasmHost\Measures\MeasureDefinitionLoader.cs" Link="Linked\MeasureDefinitionLoader.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Tinkwell.Firmwareless.Hosting.Supervisor/Tinkwell.Firmwareless.Hosting.Supervisor.csproj" />
+    <Project Path="src/Tinkwell.Firmwareless.Hosting.Router/Tinkwell.Firmwareless.Hosting.Router.csproj" />
+    <Project Path="src/Tinkwell.Firmwareless.Hosting.WasmHost/Tinkwell.Firmwareless.Hosting.WasmHost.csproj" />
+    <Project Path="src/Tinkwell.Runlet.Firmwareless.Proxy/Tinkwell.Runlet.Firmwareless.Proxy.csproj" />
+    <Project Path="src/Tinkwell.Runlet.Firmwareless.AssetRegistry/Tinkwell.Runlet.Firmwareless.AssetRegistry.csproj" />
+    <Project Path="src/Tinkwell.Runlet.Firmwareless.CoAP/Tinkwell.Runlet.Firmwareless.CoAP.csproj" />
+    <Project Path="src/Tinkwell.Runlet.Firmwareless.Provisioning/Tinkwell.Runlet.Firmwareless.Provisioning.csproj" />
+    <Project Path="src/Tinkwell.Cli.Commands.Hub/Tinkwell.Cli.Commands.Hub.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tinkwell.Firmwareless.Hosting.Tests/Tinkwell.Firmwareless.Hosting.Tests.csproj" />
+  </Folder>
+</Solution>

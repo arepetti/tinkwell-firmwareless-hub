@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Docker.DotNet" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Tools" PrivateAssets="All" />
+    <PackageReference Include="Grpc.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\app\libs\Tinkwell.Telemetry\Tinkwell.Telemetry.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\proto\ipc_hub.proto" GrpcServices="None" Link="Proto\ipc_hub.proto" />
+    <Protobuf Include="..\..\proto\firmwareless_proxy.proto" GrpcServices="Server" Link="Proto\firmwareless_proxy.proto" />
+    <Protobuf Include="..\..\proto\firmwareless_assets.proto" GrpcServices="Client" Link="Proto\firmwareless_assets.proto" />
+    <Protobuf Include="..\..\proto\state_store.proto" GrpcServices="Client" Link="Proto\state_store.proto" />
+  </ItemGroup>
+
+</Project>

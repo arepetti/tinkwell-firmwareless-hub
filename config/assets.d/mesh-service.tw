@@ -1,0 +1,16 @@
+// mesh-service.tw -- Service-only asset (no physical device).
+//
+// This asset has no bound device. Its firmlet package includes a
+// services.tw that declares mesh.v1.MeshService with handler bindings.
+// The host process reads services.tw at startup and resolves WASM
+// exports automatically -- the asset config only needs to reference
+// the firmlet.
+
+asset mesh-bridge {
+    id       "00000000-0000-0000-0000-000000000001"
+
+    firmlet {
+        name    "mesh-bridge"
+        version "2.0.0"
+    }
+}

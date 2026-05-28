@@ -1,0 +1,132 @@
+syntax = "proto3";
+package tw.firmwareless.proxy;
+option csharp_namespace = "Tinkwell.Runlet.Firmwareless.Proxy.Proto";
+
+service FirmwarelessProxy {
+  rpc ForwardToHost(ForwardToHostRequest) returns (ForwardToHostReply);
+  rpc ForwardFromHost(ForwardFromHostRequest) returns (stream HostMessage);
+  rpc StartHost(StartHostRequest) returns (StartHostReply);
+  rpc StopHost(StopHostRequest) returns (StopHostReply);
+  rpc WriteMeasure(WriteMeasureRequest) returns (WriteMeasureReply);
+  rpc SuspendAsset(SuspendAssetRequest) returns (SuspendAssetReply);
+  rpc ResumeAsset(ResumeAssetRequest) returns (ResumeAssetReply);
+  rpc GetHealth(GetHealthRequest) returns (GetHealthReply);
+  rpc StreamHealth(StreamHealthRequest) returns (stream HealthSnapshotMessage);
+  rpc StreamLogs(StreamLogsRequest) returns (stream LogMessage);
+}
+
+message ForwardToHostRequest {
+  string asset_id = 1;
+  bytes envelope = 2;
+}
+
+message ForwardToHostReply {
+  bool success = 1;
+  bytes response_envelope = 2;
+  string error = 3;
+}
+
+message ForwardFromHostRequest {
+  string asset_id = 1;
+}
+
+message HostMessage {
+  string asset_id = 1;
+  bytes envelope = 2;
+}
+
+message StartHostRequest {
+  string asset_id = 1;
+  string firmlet_path = 2;
+}
+
+message StartHostReply {
+  bool success = 1;
+  string error = 2;
+}
+
+message StopHostRequest {
+  string asset_id = 1;
+  string reason = 2;
+}
+
+message StopHostReply {
+  bool success = 1;
+  string error = 2;
+}
+
+message WriteMeasureRequest {
+  string asset_id = 1;
+  string name = 2;
+  oneof measure_value {
+    double float_value    = 3;
+    string quantity_value = 4;
+  }
+  string unit         = 5;
+  uint64 timestamp_ms = 6;
+}
+
+message WriteMeasureReply {
+  bool success = 1;
+  string error = 2;
+}
+
+message SuspendAssetRequest {
+  string asset_id = 1;
+  string reason   = 2;
+}
+
+message SuspendAssetReply {
+  bool   success = 1;
+  string error   = 2;
+}
+
+message ResumeAssetRequest {
+  string asset_id = 1;
+}
+
+message ResumeAssetReply {
+  bool   success = 1;
+  string error   = 2;
+}
+
+message GetHealthRequest {}
+
+message GetHealthReply {
+  repeated HostHealthInfo hosts = 1;
+  HostHealthInfo router         = 2;
+  uint64 timestamp_ms           = 3;
+}
+
+message HostHealthInfo {
+  string asset_id            = 1;
+  string firmlet_name        = 2;
+  string firmlet_state       = 3;
+  double cpu_percent         = 4;
+  uint64 working_set_bytes   = 5;
+  int32  thread_count        = 6;
+  string status              = 7;
+  uint64 uptime_ms           = 8;
+  int32  restart_count       = 9;
+}
+
+message StreamHealthRequest {}
+
+message HealthSnapshotMessage {
+  repeated HostHealthInfo hosts = 1;
+  HostHealthInfo router         = 2;
+  uint64 timestamp_ms           = 3;
+}
+
+message StreamLogsRequest {
+  repeated string asset_ids = 1;
+  bool all_assets           = 2;
+}
+
+message LogMessage {
+  string asset_id     = 1;
+  string module       = 2;
+  int32  level        = 3;
+  string message      = 4;
+  uint64 timestamp_ms = 5;
+}

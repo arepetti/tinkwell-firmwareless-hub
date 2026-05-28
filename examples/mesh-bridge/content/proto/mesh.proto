@@ -1,0 +1,55 @@
+// mesh.proto -- Protobuf contract for mesh.v1.MeshService.
+//
+// Ships inside the firmlet package so callers can generate client stubs.
+// Message types are generated at firmlet build time (nanopb for C, prost
+// for Rust, as-proto for AssemblyScript).
+
+syntax = "proto3";
+package mesh.v1;
+
+// ── Route ───────────────────────────────────────────────────────────────
+
+message RouteRequest {
+  bytes  target_device_id = 1;
+  bytes  payload          = 2;
+  uint32 ttl              = 3;  // max hops, 0 = direct only
+}
+
+message RouteResponse {
+  int32  status       = 1;  // 0 = delivered, 1 = queued, negative = error
+  uint32 hops         = 2;
+  uint32 latency_ms   = 3;
+}
+
+// ── Discover ────────────────────────────────────────────────────────────
+
+message DiscoverRequest {
+  uint32 max_depth = 1;  // how far to probe, 0 = immediate neighbors only
+}
+
+message DiscoverResponse {
+  repeated MeshNode nodes = 1;
+}
+
+message MeshNode {
+  bytes  device_id   = 1;
+  bytes  parent_id   = 2;  // empty for root
+  uint32 depth       = 3;
+  int32  rssi        = 4;
+}
+
+// ── GetTopology ─────────────────────────────────────────────────────────
+
+message GetTopologyRequest {
+}
+
+message GetTopologyResponse {
+  repeated MeshLink links = 1;
+}
+
+message MeshLink {
+  bytes  source_id = 1;
+  bytes  target_id = 2;
+  int32  rssi      = 3;
+  uint32 latency_ms = 4;
+}

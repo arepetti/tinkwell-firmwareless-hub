@@ -1,0 +1,365 @@
+// ipc_hub.proto -- IPC protocol for the firmwareless hosting stack.
+//
+// Named pipes: Router <-> WasmHost processes
+// Named pipes: Supervisor <-> Router (heartbeat, commands)
+// TCP:         Router <-> Proxy Runlet (crosses Docker boundary)
+//
+// Messages crossing the Docker boundary carry an asset_id field so
+// the proxy can enforce identity and permissions.
+//
+// SPDX-License-Identifier: MIT
+
+syntax = "proto3";
+package tw.hub;
+
+option csharp_namespace = "Tinkwell.Firmwareless.Hosting.Ipc.Proto";
+
+// ── Envelope ────────────────────────────────────────────────────────────
+
+message IpcEnvelope {
+  string asset_id = 100;
+
+  oneof payload {
+    // Lifecycle (host <-> router)
+    RegisterClient   register_client    = 1;
+    Ready            ready              = 2;
+    Shutdown         shutdown           = 3;
+    Fatal            fatal              = 4;
+
+    // Lifecycle (proxy -> router -> supervisor)
+    StartHost        start_host         = 5;
+    StopHost         stop_host          = 6;
+    HostStarted      host_started       = 7;
+    HostStopped      host_stopped       = 8;
+
+    // Firmlet lifecycle (router -> host, host -> router)
+    SuspendFirmlet        suspend_firmlet        = 9;
+    ResumeFirmlet         resume_firmlet         = 80;
+    FirmletStateChanged   firmlet_state_changed  = 81;
+
+    // Service registration / discovery
+    RegisterService  register_service   = 10;
+    FindService      find_service       = 11;
+    FindServiceReply find_service_reply = 12;
+    ListServices     list_services      = 13;
+    ListServicesReply list_services_reply = 14;
+    ServiceExistsReq  service_exists     = 15;
+    ServiceExistsReply service_exists_reply = 16;
+
+    // Device data (router -> host)
+    DeviceHeartbeat  device_heartbeat   = 20;
+    DeviceTelemetry  device_telemetry   = 21;
+
+    // Device commands (host -> router)
+    SendCommand      send_command       = 30;
+    SendCommandReply send_command_reply = 31;
+
+    // Sensor reads (host -> router -> host)
+    ReadSensor       read_sensor        = 40;
+    ReadSensorReply  read_sensor_reply  = 41;
+
+    // Inter-firmlet calls (host -> router -> host)
+    ServiceCall      service_call       = 50;
+    ServiceReply     service_reply      = 51;
+
+    // Measures (host -> router -> proxy)
+    WriteMeasure      write_measure       = 55;
+    WriteMeasureReply write_measure_reply = 56;
+
+    // Logging (host -> router)
+    LogEntry         log_entry          = 60;
+
+    // Health (supervisor -> router -> proxy)
+    HealthSnapshot   health_snapshot    = 70;
+
+    // Supervisor <-> Router
+    SupervisorHeartbeat supervisor_heartbeat = 90;
+    RouterHeartbeat     router_heartbeat     = 91;
+    RouterReady         router_ready         = 92;
+    SuspendAsset        suspend_asset        = 93;
+    ResumeAsset         resume_asset         = 94;
+    AssetSuspended      asset_suspended      = 95;
+    AssetResumed        asset_resumed        = 96;
+  }
+}
+
+// ── Lifecycle ───────────────────────────────────────────────────────────
+
+message RegisterClient {
+  string host_id  = 1;
+  string asset_id = 2;
+}
+
+message Ready {
+  repeated string loaded_modules = 1;
+}
+
+message Shutdown {
+  string reason = 1;
+}
+
+message Fatal {
+  string message = 1;
+  string module  = 2;
+}
+
+message StartHost {
+  string asset_id     = 1;
+  string firmlet_path = 2;
+}
+
+message StopHost {
+  string asset_id = 1;
+  string reason   = 2;
+}
+
+message HostStarted {
+  string asset_id = 1;
+}
+
+message HostStopped {
+  string asset_id = 1;
+  string reason   = 2;
+}
+
+// ── Firmlet lifecycle ───────────────────────────────────────────────────
+
+enum FirmletState {
+  FIRMLET_STATE_LOADING     = 0;
+  FIRMLET_STATE_INITIALIZED = 1;
+  FIRMLET_STATE_RUNNING     = 2;
+  FIRMLET_STATE_SUSPENDED   = 3;
+  FIRMLET_STATE_STOPPED     = 4;
+}
+
+enum LifecycleEvent {
+  LIFECYCLE_EVENT_INITIALIZE = 0;
+  LIFECYCLE_EVENT_START      = 1;
+  LIFECYCLE_EVENT_STOP       = 2;
+}
+
+enum LifecycleReason {
+  LIFECYCLE_REASON_START            = 0;
+  LIFECYCLE_REASON_FIRST_TIME_SETUP = 1;
+  LIFECYCLE_REASON_RESTART          = 2;
+  LIFECYCLE_REASON_RESUME           = 3;
+  LIFECYCLE_REASON_SUSPEND          = 4;
+  LIFECYCLE_REASON_UNINSTALLING     = 5;
+  LIFECYCLE_REASON_QUIT             = 6;
+  LIFECYCLE_REASON_TERMINATING      = 7;
+}
+
+message SuspendFirmlet {
+  string reason = 1;
+}
+
+message ResumeFirmlet {}
+
+message FirmletStateChanged {
+  FirmletState    state       = 1;
+  LifecycleEvent  last_event  = 2;
+  LifecycleReason last_reason = 3;
+}
+
+// ── Service registration / discovery ────────────────────────────────────
+
+enum ServiceState {
+  SERVICE_STATE_DEFINED     = 0;
+  SERVICE_STATE_READY       = 1;
+  SERVICE_STATE_DEGRADED    = 2;
+  SERVICE_STATE_UNAVAILABLE = 3;
+}
+
+enum ModuleLoadPolicy {
+  MODULE_LOAD_POLICY_STARTUP   = 0;
+  MODULE_LOAD_POLICY_ON_DEMAND = 1;
+}
+
+message RegisterService {
+  string full_name   = 1;
+  string family_name = 2;
+  repeated MethodInfo methods = 3;
+  ServiceState state  = 4;
+  string module_name  = 5;
+  ModuleLoadPolicy load_policy = 6;
+}
+
+message MethodInfo {
+  string name           = 1;
+  string handler_export = 2;
+  bool   bound          = 3;
+}
+
+message FindService {
+  string family_name = 1;
+}
+
+message FindServiceReply {
+  bool         found     = 1;
+  string       full_name = 2;
+  ServiceState state     = 3;
+}
+
+message ListServices {}
+
+message ListServicesReply {
+  repeated ServiceInfo services = 1;
+}
+
+message ServiceInfo {
+  string       full_name   = 1;
+  string       family_name = 2;
+  string       host_id     = 3;
+  ServiceState state       = 4;
+  repeated MethodInfo methods = 5;
+}
+
+message ServiceExistsReq {
+  string name = 1;
+}
+
+message ServiceExistsReply {
+  bool         exists = 1;
+  ServiceState state  = 2;
+}
+
+// ── Device data ─────────────────────────────────────────────────────────
+
+message DeviceHeartbeat {
+  bytes  device_id     = 1;
+  int32  vendor_id     = 2;
+  int32  product_id    = 3;
+  int32  serial_number = 4;
+  string fw_version    = 5;
+  uint64 uptime_ms     = 6;
+  uint32 free_heap     = 7;
+  int32  boot_reason   = 8;
+  bytes  app_data      = 9;
+  repeated SensorValue sensors = 10;
+}
+
+message DeviceTelemetry {
+  repeated SensorValue readings = 1;
+}
+
+message SensorValue {
+  string name         = 1;
+  double value        = 2;
+  uint64 timestamp_ms = 3;
+}
+
+// ── Device commands ─────────────────────────────────────────────────────
+
+message SendCommand {
+  string cmd_type = 1;
+  bytes  payload  = 2;
+}
+
+message SendCommandReply {
+  bool   success = 1;
+  string error   = 2;
+}
+
+// ── Sensor reads ────────────────────────────────────────────────────────
+
+message ReadSensor {
+  string name = 1;
+}
+
+message ReadSensorReply {
+  bool   found        = 1;
+  double value        = 2;
+  uint64 timestamp_ms = 3;
+}
+
+// ── Inter-firmlet calls ─────────────────────────────────────────────────
+
+message ServiceCall {
+  string correlation_id = 1;
+  string service_name   = 2;
+  string method_name    = 3;
+  bytes  request        = 4;
+  bool   by_family      = 5;
+  uint32 timeout_ms     = 6;
+}
+
+message ServiceReply {
+  string correlation_id = 1;
+  bool   success        = 2;
+  bytes  response       = 3;
+  string error          = 4;
+}
+
+// ── Measures ────────────────────────────────────────────────────────────
+
+message WriteMeasure {
+  string name = 1;
+  oneof measure_value {
+    double float_value    = 2;
+    string quantity_value = 3;
+  }
+  string unit         = 4;
+  uint64 timestamp_ms = 5;
+}
+
+message WriteMeasureReply {
+  bool   success = 1;
+  string error   = 2;
+}
+
+// ── Logging ─────────────────────────────────────────────────────────────
+
+message LogEntry {
+  int32  level   = 1;
+  string message = 2;
+  string module  = 3;
+}
+
+// ── Health monitoring ───────────────────────────────────────────────────
+
+message HostHealthReport {
+  string       asset_id           = 1;
+  string       firmlet_name       = 2;
+  FirmletState firmlet_state      = 3;
+  double       cpu_percent        = 4;
+  uint64       working_set_bytes  = 5;
+  int32        thread_count       = 6;
+  string       status             = 7;
+  uint64       uptime_ms          = 8;
+  int32        restart_count      = 9;
+  repeated ServiceHealthInfo services = 10;
+}
+
+message ServiceHealthInfo {
+  string       full_name = 1;
+  ServiceState state     = 2;
+}
+
+message HealthSnapshot {
+  repeated HostHealthReport hosts = 1;
+  HostHealthReport router         = 2;
+  uint64           timestamp_ms   = 3;
+}
+
+// ── Supervisor <-> Router ───────────────────────────────────────────────
+
+message SupervisorHeartbeat {}
+message RouterHeartbeat {}
+message RouterReady {}
+
+message SuspendAsset {
+  string asset_id = 1;
+  string reason   = 2;
+}
+
+message ResumeAsset {
+  string asset_id = 1;
+}
+
+message AssetSuspended {
+  string asset_id = 1;
+}
+
+message AssetResumed {
+  string asset_id = 1;
+}

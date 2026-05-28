@@ -1,0 +1,22 @@
+// hub.tw -- Root configuration for the Tinkwell Firmwareless Edge Hub.
+// Shipped with the Docker image or bind-mounted at runtime.
+
+include "hub-defaults.tw"
+include "${APPDATA}/assets.d/*.tw"
+
+hub {
+    name         "edge-hub-01"
+    architecture "arm64"
+    registry-url "https://firmlets.example.com"
+    hub-key      env("TW_FIRMLET_HUB_API_KEY")
+    data-dir     env("APPDATA", "/var/lib/tinkwell/hub")
+
+    coap {
+        bind "0.0.0.0"
+        port 5684
+    }
+
+    sqlite {
+        path "${data-dir}/hub.db"
+    }
+}
